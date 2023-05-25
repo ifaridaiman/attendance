@@ -210,28 +210,6 @@
             }
         }
 
-        // Function to fetch updated data and update the table
-        function updateTableData() {
-            $.ajax({
-                url: "{{ route('attendance.updatedData') }}",
-                type: "GET",
-                success: function(response) {
-                    // Update the table rows with the updated data
-                    response.forEach(function(attendee) {
-                        var row = document.getElementById("attendee-" + attendee.id);
-                        row.querySelector("td:nth-child(3)").innerHTML = attendee.present === 0 ? '<button class="btn btn-danger" type="submit" onclick="confirmRegistration(' + attendee.id + ',\'' + attendee.name + '\', event)">Register</button>' : '<div class="d-flex align-items-center"><p class="text-success m-0 fw-bold">Registered</p></div>';
-                        row.querySelector("td:nth-child(4)").innerHTML = attendee.best_dress === 0 ? '<form action="{{ route('attendance.validateBestDress', $value->id) }}" method="POST">@method('PATCH')@csrf<div class="d-flex align-items-center"><button class="btn btn-primary" type="submit">Nominate</button></div></form>' : '<div class="d-flex align-items-center"><div class="flex-shrink-0"><p class="text-success m-0 fw-bold">Nominated</p></div><div class="flex-grow-1 ms-3"><form action="{{ route('attendance.cancelBestDress', $value->id) }}" method="POST">@method('PATCH')@csrf<button class="btn btn-danger" type="submit">Cancel</button></form></div></div>';
-                        row.querySelector("td:nth-child(5)").innerHTML = attendee.lucky_draw === 0 ? '<form action="{{ route('attendance.validateLuckyDraw', $value->id) }}" method="POST">@method('PATCH')@csrf<div class="d-flex align-items-center"><button class="btn btn-primary" type="submit">Received</button></div></form>' : '<div class="d-flex align-items-center"><div class="flex-shrink-0"><p class="text-success m-0 fw-bold">Received</p></div></div>';
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        }
-
-        // Call the updateTableData function every 10 seconds
-        setInterval(updateTableData, 10000);
     </script>
 </body>
 </html>
