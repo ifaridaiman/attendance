@@ -6,6 +6,8 @@ use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+
 class AttendanceController extends Controller
 {
     /**
@@ -20,18 +22,31 @@ class AttendanceController extends Controller
                                 ->get();
         return view('home',compact('attendees','best_dress_department'));
     }
+    public function updatedData()
+    {
+        $attendees = Attendance::all();
+
+        // Return the updated data as a JSON response
+        return Response::json($attendees);
+    }
 
     public function search(Request $request)
     {
-        $search = $request->input('search');
 
-        $attendees = Attendance::where('name', 'like', '%' . $search . '%')->get();
-        $best_dress_department = Attendance::select('department', DB::raw('COUNT(*) as total_nominees'))
-                                ->where('best_dress', 1)
-                                ->groupBy('department')
-                                ->get();
+            $search = $request->input('search');
+            if ($search) {
+                $attendees = Attendance::where('name', 'like', '%' . $search . '%')->get();
+                $best_dress_department = Attendance::select('department', DB::raw('COUNT(*) as total_nominees'))
+                                            ->where('best_dress', 1)
+                                            ->groupBy('department')
+                                            ->get();
 
-        return view('home', compact('attendees','best_dress_department'));
+                return view('home', compact('attendees', 'best_dress_department'));
+            } else {
+                return redirect()->back()->with('error', 'Please provide a search term.');
+            }
+
+
     }
 
     public function validateRegistration($id)
@@ -40,7 +55,7 @@ class AttendanceController extends Controller
         $attendee->present = 1;
         $attendee->save();
 
-        return redirect()->back();
+        return redirect('/attendance');
     }
 
     public function validateBestDress($id)
@@ -49,7 +64,8 @@ class AttendanceController extends Controller
         $attendee->best_dress = 1;
         $attendee->save();
 
-        return redirect()->back();
+        return redirect('/attendance');
+;
     }
     public function validateLuckyDraw($id)
     {
@@ -57,7 +73,8 @@ class AttendanceController extends Controller
         $attendee->lucky_draw = 1;
         $attendee->save();
 
-        return redirect()->back();
+        return redirect('/attendance');
+;
     }
 
     public function cancelBestDress($id)
@@ -66,7 +83,8 @@ class AttendanceController extends Controller
         $attendee->best_dress = 0;
         $attendee->save();
 
-        return redirect()->back();
+        return redirect('/attendance');
+;
     }
 
     public function listNotReceivedLuckyDraw()

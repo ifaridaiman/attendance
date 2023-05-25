@@ -31,11 +31,12 @@
             </thead>
             <tbody>
                 @foreach($attendees as $key => $value)
-                    <tr>
-                        <td style="vertical-align: middle;">{{ $value->name }}</td>
-                        <td style="vertical-align: middle;">{{ $value->department }}</td>
-
-                    </tr>
+                    @if($value->department != 'Guest')
+                        <tr>
+                            <td style="vertical-align: middle;">{{ $value->name }}</td>
+                            <td style="vertical-align: middle;">{{ $value->department }}</td>
+                        </tr>
+                    @endif
                 @endforeach
 
             </tbody>

@@ -6,6 +6,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <header>
@@ -32,7 +33,7 @@
                     <div class="card">
                         <h5 class="card-header">{{ $value->department }}</h5>
                         <div class="card-body">
-                            <h5 class="card-title">{{ $value->total_nominees }} </h5>
+                            <h5 class="card-title" id="total-nominees-{{ $value->department }}">{{ $value->total_nominees }}</h5>
                         </div>
                     </div>
                 </div>
@@ -41,7 +42,6 @@
     </div>
 
     <div class="mt-5 px-4">
-
         <form action="{{ route('attendance.search') }}" method="POST">
             @csrf
             <div class="input-group mb-3">
@@ -62,7 +62,7 @@
             </thead>
             <tbody>
                 @foreach($attendees as $key => $value)
-                    <tr>
+                    <tr id="attendee-{{ $value->id }}">
                         <td style="vertical-align: middle;">{{ $value->name }}</td>
                         <td style="vertical-align: middle;">{{ $value->department }}</td>
                         <td style="vertical-align: middle;">
@@ -104,28 +104,29 @@
                         </td>
                         <td style="vertical-align: middle;">
                             @if ($value->lucky_draw == 0)
-                                <form action="{{ route('attendance.validateLuckyDraw', $value->id) }}" method="POST">
-                                    @method('PATCH')
-                                    @csrf
-                                    <div class="d-flex align-items-center">
-                                        <button class="btn btn-primary" type="submit">Received</button>
-                                    </div>
-                                </form>
+                                @if($value->department != 'Guest')
+                                    <form action="{{ route('attendance.validateLuckyDraw', $value->id) }}" method="POST">
+                                        @method('PATCH')
+                                        @csrf
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-primary" type="submit">Received</button>
+                                        </div>
+                                    </form>
+                                @endif
                             @else
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
                                         <p class="text-success m-0 fw-bold">Received</p>
                                     </div>
-
                                 </div>
                             @endif
                         </td>
                     </tr>
                 @endforeach
-
             </tbody>
         </table>
     </div>
+
     <script>
         function confirmRegistration(id,name,event) {
             console.info(id,name,event);
@@ -134,8 +135,7 @@
                 document.getElementById("registrationForm_" + id).submit();
             }
         }
-    </script>
-    <script>
+
         function toggleBestDressSection() {
             var bestDressSection = document.getElementById('best-dress');
             if (bestDressSection.style.display === 'none') {
@@ -144,6 +144,29 @@
                 bestDressSection.style.display = 'none';
             }
         }
+
+        // Function to fetch updated data and update the table
+        function updateTableData() {
+            $.ajax({
+                url: "{{ route('attendance.updatedData') }}",
+                type: "GET",
+                success: function(response) {
+                    // Update the table rows with the updated data
+                    response.forEach(function(attendee) {
+                        var row = document.getElementById("attendee-" + attendee.id);
+                        row.querySelector("td:nth-child(3)").innerHTML = attendee.present === 0 ? '<button class="btn btn-danger" type="submit" onclick="confirmRegistration(' + attendee.id + ',\'' + attendee.name + '\', event)">Register</button>' : '<div class="d-flex align-items-center"><p class="text-success m-0 fw-bold">Registered</p></div>';
+                        row.querySelector("td:nth-child(4)").innerHTML = attendee.best_dress === 0 ? '<form action="{{ route('attendance.validateBestDress', $value->id) }}" method="POST">@method('PATCH')@csrf<div class="d-flex align-items-center"><button class="btn btn-primary" type="submit">Nominate</button></div></form>' : '<div class="d-flex align-items-center"><div class="flex-shrink-0"><p class="text-success m-0 fw-bold">Nominated</p></div><div class="flex-grow-1 ms-3"><form action="{{ route('attendance.cancelBestDress', $value->id) }}" method="POST">@method('PATCH')@csrf<button class="btn btn-danger" type="submit">Cancel</button></form></div></div>';
+                        row.querySelector("td:nth-child(5)").innerHTML = attendee.lucky_draw === 0 ? '<form action="{{ route('attendance.validateLuckyDraw', $value->id) }}" method="POST">@method('PATCH')@csrf<div class="d-flex align-items-center"><button class="btn btn-primary" type="submit">Received</button></div></form>' : '<div class="d-flex align-items-center"><div class="flex-shrink-0"><p class="text-success m-0 fw-bold">Received</p></div></div>';
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Call the updateTableData function every 10 seconds
+        setInterval(updateTableData, 10000);
     </script>
 </body>
 </html>

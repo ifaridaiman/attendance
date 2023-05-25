@@ -49,7 +49,9 @@
 
         <div class="row border p-3">
             @foreach($present as $key => $value)
-                <p class="m-0">{{ $value->name }}</p>
+                @if($value->department != 'Guest')
+                    <p class="m-0">{{ $value->name }}</p>
+                @endif
             @endforeach
         </div>
     </div>
