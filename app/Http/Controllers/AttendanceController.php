@@ -58,6 +58,14 @@ class AttendanceController extends Controller
         return redirect('/attendance');
     }
 
+    public function cancelRegistration($id)
+    {
+        $attendee = Attendance::findOrFail($id);
+        $attendee->present = 0;
+        $attendee->save();
+        return redirect('/attendance');
+    }
+
     public function validateBestDress($id)
     {
         $attendee = Attendance::findOrFail($id);
@@ -65,33 +73,40 @@ class AttendanceController extends Controller
         $attendee->save();
 
         return redirect('/attendance');
-;
     }
-    public function validateLuckyDraw($id)
-    {
-        $attendee = Attendance::findOrFail($id);
-        $attendee->lucky_draw = 1;
-        $attendee->save();
-
-        return redirect('/attendance');
-;
-    }
-
     public function cancelBestDress($id)
     {
         $attendee = Attendance::findOrFail($id);
         $attendee->best_dress = 0;
         $attendee->save();
+        return redirect('/attendance');
+    }
+
+    public function validateLuckyDraw(Request $request, $id)
+    {
+        $attendee = Attendance::findOrFail($id);
+        $attendee->lucky_draw = 1;
+
+        $attendee->lucky_draw_prize = $request->selectedPrizeType;
+        $attendee->save();
 
         return redirect('/attendance');
-;
     }
+    public function cancelLuckyDraw($id)
+    {
+        $attendee = Attendance::findOrFail($id);
+        $attendee->lucky_draw = 0;
+        $attendee->lucky_draw_prize = null;
+        $attendee->save();
+        return redirect('/attendance');
+    }
+
+
 
     public function listNotReceivedLuckyDraw()
     {
         $attendees = Attendance::where('lucky_draw',0)->where('present',1)->get();
         return view('not-received',compact('attendees'));
-
     }
 
     /**

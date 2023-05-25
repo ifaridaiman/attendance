@@ -73,9 +73,18 @@
                                     <button class="btn btn-danger" type="submit" onclick="confirmRegistration({{ $value->id }},'{{ $value->name }}', event)">Register</button>
                                 </form>
                             @else
-                                <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
                                     <p class="text-success m-0 fw-bold">Registered</p>
                                 </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <form action="{{ route('attendance.cancelRegistration', $value->id) }}" method="POST">
+                                        @method('PATCH')
+                                        @csrf
+                                        <button class="btn btn-danger" type="submit">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
                             @endif
                         </td>
                         <td style="vertical-align: middle;">
@@ -104,21 +113,77 @@
                         </td>
                         <td style="vertical-align: middle;">
                             @if ($value->lucky_draw == 0)
-                                @if($value->department != 'Guest')
-                                    <form action="{{ route('attendance.validateLuckyDraw', $value->id) }}" method="POST">
-                                        @method('PATCH')
-                                        @csrf
-                                        <div class="d-flex align-items-center">
-                                            <button class="btn btn-primary" type="submit">Received</button>
-                                        </div>
-                                    </form>
-                                @endif
-                            @else
+                            @if($value->department != 'Guest')
+                            <form action="{{ route('attendance.validateLuckyDraw', $value->id) }}" method="POST">
+                                @method('PATCH')
+                                @csrf
                                 <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <p class="text-success m-0 fw-bold">Received</p>
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#prizeModal">Received</button>
+                                </div>
+
+                                <!-- Prize Modal -->
+                                <div class="modal fade" id="prizeModal" tabindex="-1" aria-labelledby="prizeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="prizeModalLabel">Select Prize Type</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Add your prize selection options here -->
+                                                <!-- For example, radio buttons for different prize types -->
+                                                <div class="form-group">
+                                                    <label for="prizeDropdown">Select Prize:</label>
+                                                    <select id="prizeDropdown" class="form-select" name="selectedPrizeType">
+                                                        <option value="">Select Prize</option>
+                                                        <option value="AEON VOUCHER 100">AEON Voucher 100</option>
+                                                        <option value="AEON VOUCHER 150">AEON Voucher 150</option>
+                                                        <option value="AEON VOUCHER 250">AEON Voucher 250</option>
+                                                        <option value="AEON VOUCHER 300">AEON Voucher 300</option>
+                                                        <option value="AEON VOUCHER 350">AEON Voucher 350</option>
+                                                        <option value="AEON VOUCHER 500">AEON Voucher 500</option>
+                                                        <option value="TEFAL RICE COOKER 1.8L">TEFAL Rice Cooker 1.8L</option>
+                                                        <option value="SAMEL 3 IN 1 SET FGD 363 JAPANESES CONCEPT EXPANDABLE ANTI THEFT ZIPPER PP LUGGAGE 20&quot; 24&quot; 28&quot;">SAMEL 3 IN 1 SET FGD 363 JAPANESES CONCEPT EXPANDABLE ANTI THEFT ZIPPER PP LUGGAGE 20&quot; 24&quot; 28&quot;</option>
+                                                        <option value="Breville Je95 Juice Fountain Large Feed Chute">Breville Je95 Juice Fountain Large Feed Chute</option>
+                                                        <option value="PerySmith Cordless Vacuum Cleaner Xtreme Pro Series XP6">PerySmith Cordless Vacuum Cleaner Xtreme Pro Series XP6</option>
+                                                        <option value="Travel Voucher (RM1000)">Travel Voucher (RM1000)</option>
+                                                        <option value="Theragun Mini">Theragun Mini</option>
+                                                        <option value="Nintendo Switch OLED">Nintendo Switch OLED</option>
+                                                        <option value="Samsung 35L Convection Microwave Oven with HOT BLAST">Samsung 35L Convection Microwave Oven with HOT BLAST</option>
+                                                        <option value="DJI Osmo Action 3 - Action Camera">DJI Osmo Action 3 - Action Camera</option>
+                                                        <option value="Samsung Galaxy Tab S7 FE (64GB)">Samsung Galaxy Tab S7 FE (64GB)</option>
+                                                        <option value="Apple Watch Series 8">Apple Watch Series 8</option>
+                                                        <option value="Osim Office Massage Chair (black)">Osim Office Massage Chair (black)</option>
+                                                        <option value="iPad Air (5th Generation) - 64GB">iPad Air (5th Generation) - 64GB</option>
+                                                        <option value="iPhone 14 Pro - 256GB">iPhone 14 Pro - 256GB</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary" onclick="setSelectedPrizeType()">Confirm</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
+                            </form>
+                        @endif
+
+                            @else
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <p class="text-success m-0 fw-bold">Received</p>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <form action="{{ route('attendance.cancelLuckyDraw', $value->id) }}" method="POST">
+                                        @method('PATCH')
+                                        @csrf
+                                        <button class="btn btn-danger" type="submit">Cancel</button>
+                                    </form>
+                                </div>
+                            </div>
                             @endif
                         </td>
                     </tr>
