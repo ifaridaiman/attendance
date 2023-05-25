@@ -10,14 +10,38 @@
 <body>
     <header>
         <div class="navbar navbar-dark bg-dark box-shadow">
-            <div class="container d-flex justify-content-center">
+            <header class="w-100 d-flex flex-wrap align-items-center justify-content-center justify-content-md-between">
+                <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+                </a>
+
                 <p class="text-center text-white m-0">
-                    Attendance Sheet
-                </p>
-            </div>
+                  Attendance Sheet
+                  </p>
+
+                <div class="col-md-3 text-end">
+                    <button class="btn btn-primary mx-2 float-end" onclick="toggleBestDressSection()">Show Best Dress</button>
+                </div>
+              </header>
         </div>
     </header>
+
+    <div class="mt-5 px-4" id="best-dress" style="display: none;">
+        <div class="row">
+            @foreach($best_dress_department as $key => $value)
+                <div class="col-4">
+                    <div class="card">
+                        <h5 class="card-header">{{ $value->department }}</h5>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $value->total_nominees }} </h5>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
     <div class="mt-5 px-4">
+
         <form action="{{ route('attendance.search') }}" method="POST">
             @csrf
             <div class="input-group mb-3">
@@ -90,6 +114,16 @@
                 document.getElementById("registrationForm_" + id).submit();
             }
 
+        }
+    </script>
+    <script>
+        function toggleBestDressSection() {
+            var bestDressSection = document.getElementById('best-dress');
+            if (bestDressSection.style.display === 'none') {
+                bestDressSection.style.display = 'block';
+            } else {
+                bestDressSection.style.display = 'none';
+            }
         }
     </script>
 </body>

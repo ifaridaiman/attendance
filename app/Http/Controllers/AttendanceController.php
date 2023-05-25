@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\DB;
 class AttendanceController extends Controller
 {
     /**
@@ -14,7 +14,11 @@ class AttendanceController extends Controller
     public function index()
     {
         $attendees = Attendance::all();
-        return view('home',compact('attendees'));
+        $best_dress_department = Attendance::select('department', DB::raw('COUNT(*) as total_nominees'))
+                                ->where('best_dress', 1)
+                                ->groupBy('department')
+                                ->get();
+        return view('home',compact('attendees','best_dress_department'));
     }
 
     public function search(Request $request)
@@ -95,6 +99,16 @@ class AttendanceController extends Controller
         return redirect()
             ->back()
             ->with('success', 'CSV file imported successfully.');
+    }
+
+    public function result(){
+        $best_dress_nominees = Attendance::where('best_dress',1)->get();
+        $best_dress_department = Attendance::select('department', DB::raw('COUNT(*) as total_nominees'))
+                                ->where('best_dress', 1)
+                                ->groupBy('department')
+                                ->get();
+        return view('best-dress',compact('best_dress_nominees','best_dress_department'));
+
     }
 
     /**
