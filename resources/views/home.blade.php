@@ -57,6 +57,7 @@
                     <th>Department</th>
                     <th>Registration</th>
                     <th>Best Dress</th>
+                    <th>Lucky Draw</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,7 +70,7 @@
                                 <form id="registrationForm_{{ $value->id }}" action="{{ route('attendance.validateRegistration', $value->id) }}" method="POST">
                                     @method('PATCH')
                                     @csrf
-                                    <button class="btn btn-primary" type="submit" onclick="confirmRegistration({{ $value->id }},'{{ $value->name }}', event)">Register</button>
+                                    <button class="btn btn-danger" type="submit" onclick="confirmRegistration({{ $value->id }},'{{ $value->name }}', event)">Register</button>
                                 </form>
                             @else
                                 <div class="d-flex align-items-center">
@@ -98,6 +99,24 @@
                                             <button class="btn btn-danger" type="submit">Cancel</button>
                                         </form>
                                     </div>
+                                </div>
+                            @endif
+                        </td>
+                        <td style="vertical-align: middle;">
+                            @if ($value->lucky_draw == 0)
+                                <form action="{{ route('attendance.validateLuckyDraw', $value->id) }}" method="POST">
+                                    @method('PATCH')
+                                    @csrf
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-primary" type="submit">Received</button>
+                                    </div>
+                                </form>
+                            @else
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <p class="text-success m-0 fw-bold">Received</p>
+                                    </div>
+
                                 </div>
                             @endif
                         </td>

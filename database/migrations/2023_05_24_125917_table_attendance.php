@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('department')->nullable();
             $table->boolean('present')->default(0);
             $table->boolean('best_dress')->default(0);
+            $table->boolean('lucky_draw')->default(0);
             $table->timestamps();
         });
     }

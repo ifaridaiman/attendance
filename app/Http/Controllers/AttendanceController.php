@@ -26,8 +26,12 @@ class AttendanceController extends Controller
         $search = $request->input('search');
 
         $attendees = Attendance::where('name', 'like', '%' . $search . '%')->get();
+        $best_dress_department = Attendance::select('department', DB::raw('COUNT(*) as total_nominees'))
+                                ->where('best_dress', 1)
+                                ->groupBy('department')
+                                ->get();
 
-        return view('home', compact('attendees'));
+        return view('home', compact('attendees','best_dress_department'));
     }
 
     public function validateRegistration($id)
@@ -47,6 +51,14 @@ class AttendanceController extends Controller
 
         return redirect()->back();
     }
+    public function validateLuckyDraw($id)
+    {
+        $attendee = Attendance::findOrFail($id);
+        $attendee->lucky_draw = 1;
+        $attendee->save();
+
+        return redirect()->back();
+    }
 
     public function cancelBestDress($id)
     {
@@ -57,6 +69,12 @@ class AttendanceController extends Controller
         return redirect()->back();
     }
 
+    public function listNotReceivedLuckyDraw()
+    {
+        $attendees = Attendance::where('lucky_draw',0)->where('present',1)->get();
+        return view('not-received',compact('attendees'));
+
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -107,7 +125,10 @@ class AttendanceController extends Controller
                                 ->where('best_dress', 1)
                                 ->groupBy('department')
                                 ->get();
-        return view('best-dress',compact('best_dress_nominees','best_dress_department'));
+
+        $present = Attendance::where('present',1)->where('lucky_draw',0)->get();
+
+        return view('best-dress',compact('best_dress_nominees','best_dress_department','present'));
 
     }
 

@@ -10,15 +10,17 @@
 <body>
     <header>
         <div class="navbar navbar-dark bg-dark box-shadow">
-            <div class="container d-flex justify-content-center">
+            <header class="w-100 d-flex flex-wrap align-items-center justify-content-center justify-content-md-center">
+
+
                 <p class="text-center text-white m-0">
-                    AV List
-                </p>
-            </div>
+                  List not receive lucky draw
+                  </p>
+              </header>
         </div>
     </header>
-    <div class="container mt-5 ">
-        <h5>List of Best Dress</h5>
+
+    <div class="px-4 mt-5">
         <table id="attendees-data" class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
@@ -28,7 +30,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($best_dress_nominees as $key => $value)
+                @foreach($attendees as $key => $value)
                     <tr>
                         <td style="vertical-align: middle;">{{ $value->name }}</td>
                         <td style="vertical-align: middle;">{{ $value->department }}</td>
@@ -38,35 +40,6 @@
 
             </tbody>
         </table>
-
-
-
     </div>
-
-
-    <div class="container mt-5 ">
-        <h5>List of not Received Lucky Draw</h5>
-
-        <div class="row border p-3">
-            @foreach($present as $key => $value)
-                <p class="m-0">{{ $value->name }}</p>
-            @endforeach
-        </div>
-    </div>
-
-    <script>
-        function copyToClipboard() {
-            console.log("test copy")
-            const textToCopy = document.querySelector('.copy-raw').innerText;
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => {
-                    alert('Copied to clipboard: ' + textToCopy);
-                })
-                .catch((error) => {
-                    console.error('Unable to copy to clipboard:', error);
-                });
-        }
-    </script>
-
 </body>
 </html>
