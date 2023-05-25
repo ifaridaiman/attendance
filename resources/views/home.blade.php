@@ -28,7 +28,7 @@
     <div class="mt-5 px-4" id="best-dress" style="display: none;">
         <div class="row">
             @foreach($best_dress_department as $key => $value)
-                <div class="col-4">
+                <div class="col-4 mb-3">
                     <div class="card">
                         <h5 class="card-header">{{ $value->department }}</h5>
                         <div class="card-body">
@@ -66,7 +66,7 @@
                         <td style="vertical-align: middle;">{{ $value->department }}</td>
                         <td style="vertical-align: middle;">
                             @if ($value->present == 0)
-                                <form action="{{ route('attendance.validateRegistration', $value->id) }}" method="POST">
+                                <form id="registrationForm_{{ $value->id }}" action="{{ route('attendance.validateRegistration', $value->id) }}" method="POST">
                                     @method('PATCH')
                                     @csrf
                                     <button class="btn btn-primary" type="submit" onclick="confirmRegistration({{ $value->id }},'{{ $value->name }}', event)">Register</button>
@@ -109,11 +109,11 @@
     </div>
     <script>
         function confirmRegistration(id,name,event) {
+            console.info(id,name,event);
             event.preventDefault();
             if (confirm("You are registering " + name + ", are you confirm?")) {
                 document.getElementById("registrationForm_" + id).submit();
             }
-
         }
     </script>
     <script>
